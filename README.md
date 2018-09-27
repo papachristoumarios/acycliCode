@@ -1,6 +1,6 @@
-<p align="center">
+<center><h1>acycliCode</h1> </center>
 
-<h1>acycliCode</h1> 
+<p align="center">
 
 <img src="https://img.shields.io/packagist/l/doctrine/orm.svg"> <img src="https://img.shields.io/pypi/pyversions/Django.svg"><img src="https://img.shields.io/badge/lang-C-green.svg">
 
