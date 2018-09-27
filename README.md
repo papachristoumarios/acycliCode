@@ -53,9 +53,11 @@ The **main idea** here is that _we can prevent this violation from happening via
 
 For example in a scheme with 3 layers (the colored edges correspond to the calls that were introduced in the current commit): 
 
-![](res/acycliCode.png)
+<p align="center">
 
+<img src="res/acycliCode.png">
 
+</p>
 
 The first of the three options depicted above is a valid option whereas the second and third options should not be allowed. This **differential approach** allows for **preventing the problem from happening**, and can be integrated to CI.
 
