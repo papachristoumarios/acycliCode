@@ -31,7 +31,6 @@
 """
 
 # Imports
-import pytest
 import collections
 import sys
 import os
@@ -228,7 +227,7 @@ if __name__ == '__main__':
 
     # Initialize argparse
     parser = argparse.ArgumentParser(
-        help='Testing routine to detect layering violations in git commits')
+        description='Testing routine to detect layering violations in git commits')
 
     parser.add_argument(
         '-c',
