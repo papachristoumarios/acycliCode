@@ -44,6 +44,6 @@ install: src/helpers.py src/acyclicode.py src/git_commits.py
 uninstall: $(INSTALL_PREFIX)/acyclicode  
 	rm $(INSTALL_PREFIX)/acyclicode  
  
-tests:
+test:
 	cd tests && $(MAKE)
 

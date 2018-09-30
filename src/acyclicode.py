@@ -51,7 +51,7 @@ logging.basicConfig(
 def basename(x): return x.split('/')[-1]
 
 
-def get_dependencies(filelist):
+def get_dependencies(filelist, recursive=True):
     """Get dependences for analysis using regex"""
 
     dependencies = set([])
@@ -68,6 +68,39 @@ def get_dependencies(filelist):
                         source_dep = ddir + '/' + \
                             re.sub('.h', '.c', result.group(1))
                         dependencies |= {source_dep}
+
+	# Iterate through dependencies header files
+	q = collections.deque()
+	visited = collections.defaultdict(bool)
+
+	if recursive:
+
+		# Initialize
+		for d in dependencies:
+			header_dep = re.sub('.c', '.h', d)
+			q.append(header_dep)
+			visited[header_dep] = True
+
+		# Perform Breadth-First Search
+		while q:
+			current = q.popleft()
+
+			# Visit
+			dependencies |= {current}
+			visited[current] = True
+
+			# Children
+			with open(filename) as f:
+	            lines = f.read().splitlines()
+
+	            for line in lines:
+	                if line.startswith('#include'):
+	                    result = re.search(r'"([A-Za-z0-9_\./\\-]*)"', line)
+	                    if result is not None:
+	                        ddir = os.path.dirname(filename)
+	                        header_dep = ddir + '/' + result.group(1)
+							if not visited[header_dep]:
+								q.append(header_dep)
 
     return dependencies
 
