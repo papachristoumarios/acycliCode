@@ -51,7 +51,7 @@ logging.basicConfig(
 def basename(x): return x.split('/')[-1]
 
 
-def get_dependencies(filelist, recursive=True):
+def get_dependencies(filelist, depth=-1):
     """Get dependences for analysis using regex"""
 
     dependencies = set([])
@@ -71,36 +71,36 @@ def get_dependencies(filelist, recursive=True):
 
     # Iterate through dependencies header files
     q = collections.deque()
-    visited = collections.defaultdict(bool)
+    visited = collections.defaultdict(int)
 
-    if recursive:
+    print('foo')
 
-        # Initialize
-        for d in dependencies:
-            header_dep = re.sub('.c', '.h', d)
-            q.append(header_dep)
-            visited[header_dep] = True
+    # Initialize
+    for d in dependencies:
+        header_dep = re.sub('.c', '.h', d)
+        q.append(header_dep)
+        visited[header_dep] = 1
 
-        # Perform Breadth-First Search
-        while q:
-            current = q.popleft()
+    # Perform Breadth-First Search
+    while q:
+        current = q.popleft()
 
-            # Visit
-            dependencies |= {current}
-            visited[current] = True
+        # Visit
+        dependencies |= {current}
 
-            # Children
-            with open(filename) as f:
-                lines = f.read().splitlines()
+        # Children
+        with open(filename) as f:
+            lines = f.read().splitlines()
 
-                for line in lines:
-                    if line.startswith('#include'):
-                        result = re.search(r'"([A-Za-z0-9_\./\\-]*)"', line)
-                        if result is not None:
-                            ddir = os.path.dirname(filename)
-                            header_dep = ddir + '/' + result.group(1)
-                            if not visited[header_dep]:
-                                q.append(header_dep)
+            for line in lines:
+                if line.startswith('#include'):
+                    result = re.search(r'"([A-Za-z0-9_\./\\-]*)"', line)
+                    if result is not None:
+                        ddir = os.path.dirname(filename)
+                        header_dep = ddir + '/' + result.group(1)
+                        if visited[header_dep] == 0 and (visited[current] + 1 <= depth or depth == -1):
+                            q.append(header_dep)
+                            visited[header_dep] = visited[current] + 1
 
     return dependencies
 
@@ -280,6 +280,12 @@ if __name__ == '__main__':
         action='store_true',
         help='Assert tests for CI testing routines')
 
+    parser.add_argument(
+        '-d',
+        help='Depth of search',
+        default=-1,
+        type=int)
+
     # Change path
     path = os.getenv('ACYCLICODE_PATH')
 
@@ -299,7 +305,7 @@ if __name__ == '__main__':
         exit(0)
 
     # Get dependences
-    deps = get_dependencies(files)
+    deps = get_dependencies(files, depth=args.d)
 
     # Generate flow graph
     flow_graph = flow_graph(files, deps, layers)
