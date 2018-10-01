@@ -43,7 +43,15 @@ install: src/helpers.py src/acyclicode.py src/git_commits.py
 
 uninstall: $(INSTALL_PREFIX)/acyclicode  
 	rm $(INSTALL_PREFIX)/acyclicode  
- 
-test:
-	cd tests && $(MAKE)
+
+reinstall: 
+	$(MAKE) uninstall
+	$(MAKE) install
+
+# Unit testing 
+tests: test1
+	
+test1: tests/layers.json
+	acyclicode -l tests/layers.json -c 6bc1dcb762db6c9e75bb41965d23cbaaf52fa72b >output1.txt 2>&1; diff output1.txt tests/output_test1.txt
+	
 
