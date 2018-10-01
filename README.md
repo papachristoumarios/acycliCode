@@ -101,7 +101,21 @@ which checks the last commit. It uses `layers.json` for the layer definition.
 
 Use the `acyclicode -h` with `-h` flag for more options. 
 
+### Using the `ACYCLICODE_PATH` environment variable
 
+In case you want to define the default path, which **must be a valid git repository** you can use the `ACYCLICODE_PATH` environment variable: 
+
+```bash
+export ACYCLICODE_PATH=/path/to/repo
+```
+
+Then running for example:
+
+```bash
+acyclicode --assert
+```
+
+Would refer to the last commit, using `path/to/repo/layers.json` as a layers definition file.  
 
 ## Integration to CI 
 
